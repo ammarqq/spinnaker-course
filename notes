@@ -1,0 +1,16 @@
+Procedure Document
+
+    Github Repository: https://github.com/in4it/spinnaker-course
+    Docs: https://github.com/in4it/spinnaker-course/tree/master/docs
+    Facebook group: https://www.facebook.com/groups/840062592768074/
+
+
+    installing spinnaker first scripts weneed to use :
+
+    1 - create-user.sh
+    2- swapon.sh its need 8 GRAM
+    3- install-halyard
+    4- configure oauth.sh
+    5- deploy-spinnaker.sh for github but we need to edit it first
+    6- restart-spinnaker.sh
+    

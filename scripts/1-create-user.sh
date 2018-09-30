@@ -1,7 +1,8 @@
 #!/bin/bash
 
 groupadd ubuntu
-useradd -g ubuntu -G admin -s /bin/bash -d /home/ubuntu ubuntu
+#useradd -g ubuntu -G admin -s /bin/bash -d /home/ubuntu ubuntu
+useradd -g ubuntu  -s /bin/bash -d /home/ubuntu ubuntu
 mkdir -p /home/ubuntu
 cp -r /root/.ssh /home/ubuntu/.ssh
 chown -R ubuntu:ubuntu /home/ubuntu
