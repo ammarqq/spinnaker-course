@@ -10,7 +10,7 @@ aws configure --profile default
 --access-key-id AKIAJ5MEEPEGFJUOIHJA --secret-access-key
 
 it will ask about aws secret key
-Secret access key :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
+Secret access key :hide
 us-east-1
 sudo apt-get install unzip
 unzip artifact.zip

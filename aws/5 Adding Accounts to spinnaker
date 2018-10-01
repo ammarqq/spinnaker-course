@@ -11,7 +11,7 @@ first we are going to configuring S3 Storage
 hal config storage s3 edit --access-key-id AKIAJ5MEEPEGFJUOIHJA --secret-access-key
 
 it will ask about aws secret key
-Secret access key :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
+Secret access key :hide
 
 because weconfigured spinnaker to use minio we need to check the newS3 configurations
 
@@ -24,7 +24,7 @@ s3:
       rootFolder: front50
   #    endpoint: http://127.0.0.1:9090  >>remove it
       accessKeyId: AKIAJ5MEEPEGFJUOIHJA
-      secretAccessKey: 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
+      secretAccessKey: hide
 
 now re-run script ./5-deploy-spinnaker.sh
 go to aws console to see the new changes
