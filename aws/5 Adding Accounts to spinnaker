@@ -1,0 +1,62 @@
+addthe spinnaker ram to be 8 GRAM insteadof 4 GRAM
+shutdown -h now 
+goto digitalocean to resize the vm
+
+su - ubuntu
+restart allservices go to spinnaker/scripts/6-restart-spinnaker.shutdown
+http://68.183.18.26:9000/#/search check spinnaker browser
+
+first we are going to configuring S3 Storage
+
+hal config storage s3 edit --access-key-id AKIAJ5MEEPEGFJUOIHJA --secret-access-key
+
+it will ask about aws secret key
+Secret access key :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
+
+because weconfigured spinnaker to use minio we need to check the newS3 configurations
+
+vi ~/.hal/config
+
+you need to remove the link from config file
+
+s3:
+      bucket: spin-c47d0b17-75ad-43ff-8efa-917697915e2b
+      rootFolder: front50
+  #    endpoint: http://127.0.0.1:9090  >>remove it
+      accessKeyId: AKIAJ5MEEPEGFJUOIHJA
+      secretAccessKey: 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
+
+now re-run script ./5-deploy-spinnaker.sh
+go to aws console to see the new changes
+to check a new bucket createsd to store pipeline and configurations
+new spin spin-c47d0b17-75ad-43ff-8efa-917697915e2b name created 
+goood newS
+
+
+
+now lets configure AWS Account.
+
+hal config provider aws edit --access-key-id AKIAJ5MEEPEGFJUOIHJA --secret-access-key
+
+hal config provider aws account add $AWS_ACCOUNT_NAME --account-id ${ACCOUNT_ID} --assume-role role/spinnakerManaged
+
+hal config provider aws account add my-aws-account --account-id 193731429423 --assume-role role/spinnakerManaged
+
+hal config provider aws account edit my-aws-account --regions us-east-1
+
+hal config provider aws enable
+
+now we have enabled AWS provider 
+lets deploy spinnaker again
+./5-deploy-spinnaker.sh
+now restart services ./6-restart-spinnaker
+
+go to spinnaker link 
+68.183.18.26:9000
+check if its working
+
+gooooood its working and access to AWS and S3
+
+
+
+

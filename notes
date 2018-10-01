@@ -8,9 +8,18 @@ Procedure Document
     installing spinnaker first scripts weneed to use :
 
     1 - create-user.sh
-    2- swapon.sh its need 8 GRAM
+    2- swapon.sh its need 8 GRAM as a SWAP
     3- install-halyard
     4- configure oauth.sh
     5- deploy-spinnaker.sh for github but we need to edit it first
     6- restart-spinnaker.sh
-    
+
+
+ 0 users
+
+Client ID
+    df54bbea45f3b9f99788
+Client Secret
+    f31f389fdf491fe7a3d05f0c4f354a5e1923b2fd
+
+change it on 4script

@@ -1,0 +1,7 @@
+spinnaker its needs its own access keys
+
+secure this keys on a secure locations
+
+if it lost remove it and create a new one for security reason for me its a test there is nothing to loss
+
+services security--IAM-->users--> u can create another access-keys

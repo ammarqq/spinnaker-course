@@ -1,0 +1,12 @@
+spinnaker require a storage provider for storing replicationsettings and configuraiton to configurepipeline
+
+aswegoing to use aws wecanstore it on s3 instead of minio
+
+and it will automatically create S3 
+
+to do it manually go to services storage S3-->create pucket name it 
+
+spinnaker-debian-repo-ammar next-next-create bucket
+
+we will use it to store debian package inside it using pipeline
+

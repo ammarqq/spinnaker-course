@@ -1,0 +1,128 @@
+first AMI is going to build using packer.
+
+AMI An image with the needed information to start a virtual machines (EC2)
+stored in background S3 but its not visible
+AWS Provicer
+
+we will setup those
+VPC
+EC2 IAM Role 
+EC2  Key Pair
+S3 bucket
+adding account to spinnaker
+
+
+start with VPC
+
+
+create a new vpc name :default
+subnet_name:defaultvpc.external-us-east-1
+
+now create subnet_name
+
+change the name defaultvpc.external.us-east-1 to defaultvpc.external.us-east-1d
+
+now create a subnet_name name it defaultvpc.external.us-east-1b
+
+availability zone : us_east-1b
+ip4 CIDRBlock 10.0.1.0/24 add it
+
+
+Subnet ID
+subnet-0e0ae3d56e56cc016
+
+now we have two vpcs now we can do high availability
+
+us-east-default
+
+_____
+create EC2 IAM Role
+
+lets create security for IAM Role.
+
+goto IAM on AWS
+
+go to roles
+create role--> EC2-->next review -->name it BaseIAMRole
+
+creating managing account its only one 
+
+goto policies -->create policy-->json-->
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Action": "sts:AssumeRole",
+        "Resource": [
+            "arn:aws:iam::${MANAGING_ACCOUNT_ID}:role/spinnakerManaged",
+            "arn:aws:iam::${MANAGED_ACCOUNT_ID}:role/spinnakerManaged"
+        ],
+        "Effect": "Allow"
+    }]
+}
+wecan find the id from top of right support-->andopening the support center-->account number
+
+and change it 
+"arn:aws:iam::193731429423:role/spinnakerManaged",
+            "arn:aws:iam::193731429423:role/spinnakerManaged"
+
+name SpinnakerAssumeRolePolicy
+
+spinnaker can access using IAM or username secretkey weare going to use secret Key
+goto users-->add user-->name:spinnaker >accesstype > programmatic-->select attach existing policy
+
+attach name PowerUserAccess click it and give it to SpinnakerAssumeRolePolicy we have beencreatedbefore
+
+ User
+  https://193731429423.signin.aws.amazon.com/console
+Secret access key
+Spinnaker
+Access key ID: AKIAJ5MEEPEGFJUOIHJA
+Secret access key :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 Hide 
+
+arn:aws:iam::193731429423:user/Spinnaker
+
+copy user ARN we need it on next policy
+
+now lets created managed roles
+
+goto polices-->create a policy-->json 
+
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": [ "ec2:*" ],
+        "Resource": "*"
+    },
+    {
+        "Effect": "Allow",
+        "Action": "iam:PassRole",
+        "Resource": "arn:aws:iam::193731429423:role/BaseIAMRole"
+    }]
+}
+
+name it SpinnakerPassRole
+
+now wegonna createing a new role-->create role ->EC2 search on PowerUserAccess and spinnakerpass
+
+name it spinnakerManaged andcreated 
+
+open spinnakerManaged role goto trustrelationship tab -->edit trustrelationship edit
+
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "1",
+        "Effect": "Allow",
+        "Principal": {
+            "AWS": "${AUTH_ARN}" # paste it with the spinnaker user arn:aws:iam::193731429423:user/Spinnaker
+        },
+    "Action": "sts:AssumeRole"
+    }]
+}
+
+update now
+
+
+
+
