@@ -1,0 +1,191 @@
+necessary configuration files
+install AWS CLI
+debian package
+create a spinnaker deployment pipeline
+on the folder/spinnaker-course/artifact$
+first install aws CLI
+apt-get install awscli
+aws configure --profile default
+
+--access-key-id AKIAJ5MEEPEGFJUOIHJA --secret-access-key
+
+it will ask about aws secret key
+Secret access key :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
+us-east-1
+sudo apt-get install unzip
+unzip artifact.zip
+aws s3 sync . s3://spinnaker-debian-repo-ammar
+
+no go to Amazon S3spinnaker-debian-repo-ammar/pool/main/n/node-demo-app
+
+on amazon and make node-demo-app_0.0.1_md64.deb public
+
+go to 
+Amazon S3spinnaker-debian-repo-ammar/dists/xenial/main
+
+and make binary-amd64 public also
+now go to ec2
+now on security group to allow traffic to hit demo app
+and allow communication internally from alb to ec2 instance
+
+goto security group create security group
+name it demo-app-ec2
+description demo-app-ec2
+vpc the defaultvpc one we created
+
+add rule
+
+inbound allow tcp port 3000 10.0.0.0/8 for internal traffic
+
+
+create a 2nd security group
+
+to allow inbound to alb from everywhere
+
+new security group
+name it demo-app-alb
+desc. demo-app-alb
+defaultvpc
+
+inbound http 80 allow from anywhere 
+back to terminal of spinnaker
+
+cp /opt/rosco/config/rosco.yml .hal/default/profiles
+
+rosco is used with spinnaker to produce the machine image
+
+it allow packer to create images
+
+edit the file 
+
+change 
+configDir: /some/path/to/config/packer
+to
+configDir: /opt/rosco/config/packer
+add debian repository
+debianRepository: https://s3.amazonaws.com/spinnaker-debian-repo-ammar/ xenial main
+
+change 
+
+enabled: ${AWS_ENABLED:false}
+enabled: true
+under baseImage set  a new image
+
+    - baseImage:
+        id: ubuntu xenial
+        shortDescription: v16.04
+        detailedDescription: Ubuntu Xenial 16.04 LTS
+        packageType: deb
+        # You can specify the templateFile used for this baseImage.
+        # If not specified, the default templateFile will be used.
+        templateFile: aws-ebs.json
+      virtualizationSettings:
+      - region: us-east-1
+        virtualizationType: hvm
+        instanceType: t2.micro
+        sourceAmi: ami-43a15f3e
+        sshUserName: ubuntu
+        spotPrice: 0
+        spotPriceAutoProduct: Linux/UNIX (Amazon VPC)
+       
+ now save the file
+
+ now deploy the spinnaker again
+
+./5-deploy-spinnaker
+
+now restart spinnakerusing the script ./6-spinnaker-restar.shortDescription
+
+systemctl status rosco.service to make sure there is no issues
+
+make sure its active and running
+
+now handover to spinnaker
+http://68.183.18.26:9000
+
+create new application 
+name: demoapp
+mail my mail
+instance port 3000 the same port opened on aws onsecurity group
+
+create
+now lets create a loadbalancer
+
+application loadbalancer alb-->configure loadbalancer
+
+account: my-aws-account
+securiy group: demo-app-alb
+
+target group http 3000
+healthcheck port 3000
+on path /
+
+leats create it
+
+lets goto pipelines now
+
+create new pipeline
+pipeline name:demo-app
+
+add a stage
+
+stage name: bake (with a debian package included)
+this bake will use the configuration files which wealtered before.
+
+bake configuration
+
+package: node-demo-app
+
+save changes
+
+add another stage
+
+deploy (deploy something)
+add a server group
+strategy: select highlander
+Loadbalancer: 
+ Targetgroup: demoapp-targetgroup
+ 
+ securitygroup:demo-app-ec2
+ instance type we can use micro utility-->nano
+ number of instances 1
+ automatic availability zone is enabled
+
+ on advanced settings select the keyname: spinnaker
+ IAM instance profile :baseIAMRole
+ now add this stage
+ now pipeline is complete lets save it.
+ and test it on security
+
+now run it manually
+u can check the logs details and goto EC2 u will find the instances created
+
+look for ami id
+look at ec2 instance
+
+now goto loadbalancer and copy dns name then paste it to browser
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
