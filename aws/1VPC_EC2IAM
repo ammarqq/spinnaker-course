@@ -68,7 +68,7 @@ and change it
 name SpinnakerAssumeRolePolicy
 
 spinnaker can access using IAM or username secretkey weare going to use secret Key
-goto users-->add user-->name:spinnaker >accesstype > programmatic-->select attach existing policy
+goto users-->add user-->name:Spinnaker >accesstype > programmatic-->select attach existing policy
 
 attach name PowerUserAccess click it and give it to SpinnakerAssumeRolePolicy we have beencreatedbefore
 

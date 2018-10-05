@@ -1,0 +1,132 @@
+Publish DEB File
+configure  jenkins
+configure spinnaker
+
+goto AWS and create a bucket 
+name: spinnaker-debian-repo-ammar-backup
+
+spinnaker-debian-repo-ammar-backup
+
+goto original backet spinnaker-debian-repo-ammar andselect folders andcopy patste to the new backet
+
+on old backet select bucket andempty it.
+now go to jenkins machine console
+
+open spinnaker/jenkins/
+./3-create-debian.sh
+
+
+now lets clone a demo-app
+
+git clone https://github.com/in4it/node-demo-app
+
+inside the folder main folder  spinnaker-course
+
+so now we are gonna to build docker container to build the packages.
+
+sudo docker build -t builddep -f Dockerfile.builddep .
+
+now we need to give  jenkins user sudo on visudo the same ubuntu privilleges
+sudo su - jenkins
+
+now go to the jenkins browser to configure the job 
+
+new item:
+name: Build Deb-->freestyle project-->git-->https://github.com/in4it/node-demo-app--> build-->
+
+-->execute shell-->
+echo "#!/bin/bash
+cd /root; apt-get install -y npm ;git-buildpackage --git-ignore-new --git-ignore-branch; cp ../*.deb ." > install.sh
+sudo docker run -v "$PWD":/root builddep bash /root/install.sh
+
+save it.
+run it so see every thingworking correctly.
+to publish this debianpackage into s3
+
+back to jenkins console
+sudo apt-get install aptly
+this tool will publish the debian package into s3
+
+aptly repo create -distribution=xenial -component=main release
+
+
+Config file not found, creating default config at /var/lib/jenkins/.aptly.conf
+
+vi /var/lib/jenkins/.aptly.conf
+
+remove this line 
+"S3PublishEndpoints": {},
+
+add this line
+  "S3PublishEndpoints": {
+    "spinnaker-debian-repo-{yourName}": {
+      "region": "us-east-1",
+      "bucket": "spinnaker-debian-repo-{yourName}",
+      "acl": "public-read",
+      "awsAccessKeyID": "{yourAcessKeyID}",
+      "awsSecretAccessKey": "{yourAcessKey}"
+    }
+  },
+
+the file will be looks like 
+
+{
+  "rootDir": "/var/lib/jenkins/.aptly",
+  "downloadConcurrency": 4,
+  "downloadSpeedLimit": 0,
+  "architectures": [],
+  "dependencyFollowSuggests": false,
+  "dependencyFollowRecommends": false,
+  "dependencyFollowAllVariants": false,
+  "dependencyFollowSource": false,
+  "gpgDisableSign": false,
+  "gpgDisableVerify": false,
+  "downloadSourcePackages": false,
+  "ppaDistributorID": "ubuntu",
+  "ppaCodename": "",
+    "S3PublishEndpoints": {
+    "spinnaker-debian-repo": {
+      "region": "us-east-1",
+      "bucket": "spinnaker-debian-repo-ammar",
+      "acl": "public-read",
+      "awsAccessKeyID": "AKIAJ5MEEPEGFJUOIHJA",
+      "awsSecretAccessKey": "hide"
+    }
+  },
+  "SwiftPublishEndpoints": {}
+}
+
+back to jenkins to publish it to s3 by browser.
+
+go to the build-->build envronment->delete workspace beofre build start
+-->on build -->addbuild step-->execute shell->
+aptly repo add -force-replace release *.deb ( to add debianfile to therepository)
+
+addanother shell ->
+
+aptly publish repo -skip-signing=true release s3:spinnaker-debian-repo-ammar: || true
+
+|| true it mean to run ones
+add another shell
+
+aptly publish update -force-overwrite -skip-signing=true xenial s3:spinnaker-debian-repo-ammar:
+
+
+add postbuild action -->archive the artifact-->*.deb
+
+
+check the aws bucket data 
+
+back to jenkins browser got build trigger -->poll scm * * * * * pull every minutes
+
+
+now go to spinnaker-->go to demo-app->configure->add trigger->
+
+->jenkins->master: my-jenkins-master->build deb->
+
+save
+
+now make achange commit and push after 1 min. the jenkins will start to build 
+
+and afterthat the spinnaker will start the build also on aws ec2
+

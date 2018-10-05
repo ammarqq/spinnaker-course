@@ -1,0 +1,58 @@
+we need to link github with dockerhub to build the file Dockerfile on dockerhub.
+
+on dockerhub goto settings>service account and services>
+
+now go to create>create automated build>select repository..>node-demo-app-1>create
+
+on build settings  trigger the master branch use tag empty and empty the tag
+
+remove the branch
+save changes
+
+
+now link docker hub with spinnaker.
+
+goto webhooks>name:spinnaker>http://68.183.18.26:8084/webhooks/webhook/dockerhub
+
+now goto spinnaker it self
+
+goto automatedTrigger>type webbhook>source:dockerhub
+goto demoapp2>pipeline>demo-app-with-trigger>add 2ndartifact>docker>index.docker.io/ammarqqqq/node-demo-app-1
+
+use prior execution on both triggers.
+
+scrollup to trigger
+goto automatedTrigger>add trigger>type webbhook>source:dockerhub it must be exaclty matches the name on dockerhub webhook
+
+type>webhook>source:dockerhub>expect artifacts:imagename
+
+on pipline deploy manifest press 2ndpoint
+
+req. artifacts to bind:
+on artifact to bind>type:docker/image...
+
+save
+
+go to github
+create newbranch name :release/v2
+
+change on index.js
+
+goto main page ,create release to tag it with new name target :release/v2 tag:v2 now publish
+
+goto dockerhub u will find the  tag v2
+
+
+goto kubernetes and check
+
+kubectlget pods
+kubectl describe pods name 
+and check the image
+
+
+the imagenamemust be the same on yamlfile with the samename on dockerhub
+index.docker.io/ammarqqqq/node-demo-app-1
+
+
+referback to spinnaker.io
+https://www.armory.io

@@ -1,0 +1,69 @@
+create a new stage type: manula judgement  ->stage name: manual judgement->depend on: deploy
+>instructions: is the application running ok ?
+judgement inputs : yes
+add judgement input :or no
+
+
+add another stage if ok
+stage name: destroy  server group
+depend on:manual judgement->destroy server group >account:my-aws-account
+>region:eu-west-1>cluster:myapp-staging>target: previous server group
+condition on: ${ #judgement( 'checkOK' ) == 'Yes' }
+
+add stage if not ok
+depend on: checkOK>type: Enable Server group>stagename: Enable server group >
+>target: previous serve group
+
+add a new stage
+dependon: Enable server group>type: destroy server group
+
+condition: ${ #judgement( 'checkOK' ) == 'No' }
+
+
+notification on mail address
+we need to change on configurations file first
+go to spinnaker console
+cp /opt/spinnaker/config/echo.yml ~/.hal/default/profiles/
+vi ~/.hal/default/profiles/echo.yml
+
+here in this file weare going to add e-mail configurations
+on the buttom of the file add this lines 
+
+before goto mailtrap.io its free signup account to send mails using it
+create inbox name: spinnaker
+u will git smtp information :)
+
+
+
+SMTP
+
+Host: smtp.mailtrap.io
+Port: 25 or 465 or 2525
+Username: 64c6bfcc1e364e
+password: e92c94d6568e6c
+Auth: PLAIN, LOGIN and CRAM-MD5
+TLS: Optional
+POP3
+Host: smtp.mailtrap.io
+Port: 1100 or 9950
+Username: 64c6bfcc1e364e
+Password: e92c94d6568e6c
+Auth: USER/PASS, PLAIN, LOGIN, APOP and CRAM-MD5
+TLS: Optional
+
+mail:
+  enabled: true
+  from: ammarqqqq@gmail.com
+spring:
+  mail:
+    host: smtp.mailtrap.io
+    username: 64c6bfcc1e364e
+    password: e92c94d6568e6c
+    port: 25
+    properties:
+      mail:
+        smtp:
+          auth: true
+
+sudo hal deploy apply
+./6-restart-spinnaker.sh

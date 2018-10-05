@@ -1,0 +1,41 @@
+we need webhook to make any changes onthe file on the github to compile using spinnaker.
+
+and also we need atoken , then to make the github access the spinnaker.
+
+goto settings>webhook>add webhook>http://68.183.18.26:8084/webhooks/git/github (spinnaker IP)
+
+content type:application/json
+secret:mysecret
+just the push event.
+add webhook
+
+token configured on own profile
+
+developer>name:spinnaker-token>scope:repo
+token-id
+
+now goto spinnakerconsole 
+
+echo 'token-id6' > github-token
+
+go to /kubenretes/scripts
+cat enable-artifacts.sh
+then execute this but becarefull where is the github-token .
+
+./enable-artifacts.sh
+
+sudo hal deploy apply
+restart spinnaker
+/script
+./6-spinnaker-restart.sh
+
+go to spinnaker->newpipline>name: demo-app-with-trigger>copyfrom:none
+
+now on new pipline must u see automated trigger and expected artifact if not keeps refresh
+
+on expected artifact>github>file path:demo-app.yml
+
+scroll up to automated triggers:git>github>organization or user:ammarqq or the user
+>project: node-demo-app-1>secret: mysecret>expected artifact> press the same one we did before.
+
+now add a stage>deploy using manifest>cluster:demo-app>stack:staging>manifest configuration:artifact

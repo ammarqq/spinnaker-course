@@ -1,0 +1,39 @@
+deploying to kubernetes using a manifest file.
+
+goto master-node console
+copy the config file to the spinnaker server
+
+go to spinanaker/kubernete
+./enable-kubenretes-on-spinnaker.sh
+
+sudo hal deploy apply
+
+now restart the services
+
+../../scripts
+./6-restart-spinnaker.sh
+
+
+now goto spinnaker
+create application>name: demoapp>mail: ammarqqqq@gmail.com>create>instance port : 80
+goto application u will find the kubenretes services and pods
+
+weare going to deployment using manifest on pipline on spinnaker.
+
+configure a new pipline>name:deploy-demoapp>create
+>add stage>type:deploy manifest>account:my-k8s-v2-account>application: demoapp>cluster:demoapp
+>stack:staging
+goto https://github.com/ammarqq/node-demo-app-1
+
+push it to dockerhub
+its available on in4it/node-demo-app wecan use it right now
+
+copy paste demo-app.yml
+
+on the spinnaker text
+which is image on docker hub.
+inside the yaml file.
+
+weare goingto save it as wedon't have automatic triggers .
+
+go to pipeline and start it manually.
