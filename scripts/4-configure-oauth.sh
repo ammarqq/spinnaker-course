@@ -2,12 +2,12 @@
 
 # env flags that need to be set:
 CLIENT_ID=df54bbea45f3b9f99788
-CLIENT_SECRET=f31f389fdf491fe7a3d05f0c4f354a5e1923b2fd
+CLIENT_SECRET=secret it of github
 #PROVIDER=google|github|azure
 PROVIDER=github
 #REDIRECT_URI=http://ip:8084/login
 REDIRECT_URI=http://68.183.18.26:8084/login
-
+#spinnaker IP
 set -e
 
 if [ -z "${CLIENT_ID}" ] ; then
